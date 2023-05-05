@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv, find_dotenv
 from jira_support import actionable_jira
-from actionable_lib import write_csv_cycletime as writer_cycletime
+from actionable_lib import cycletime
 import logging.config
 
 logging.config.fileConfig('logging.conf')           
@@ -14,4 +14,4 @@ outputDir = os.getenv('OUTPUT_DIR_PATH')
 
 data_json = actionable_jira.get_jira_data()
 
-writer_cycletime.write_to_csv(data_json, outputDir, PROJECT, HOLIDAYS)
+cycletime.write_to_csv(data_json, outputDir, PROJECT, HOLIDAYS)
