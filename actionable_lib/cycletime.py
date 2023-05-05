@@ -3,6 +3,7 @@ import csv
 import numpy as np
 import json
 import logging
+import pandas as pd
 
 logger = logging.getLogger('root')
 
@@ -50,13 +51,11 @@ def get_start_stop_dates(history):
                 dates_end.append(datetime.strptime(activity["created"][:10], DATE_FMT).date())
     if dates_ini:
         dates = np.array(dates_ini)
-        # start = min(dates_ini)
         start = dates.min()
     if dates_end:
         dates = np.array(dates_end)
-        # stop = max(dates_end)
         stop = dates.max()
-    # return {"ini_date":start, "end_date":stop}
+        
     return (start, stop)
 
 
@@ -127,23 +126,25 @@ def getRows(data_json, holidays=[]):
         cycletime = cycletime + np.busday_count(item.iniDate, item.endDate, 'Mon Tue Wed Thu Fri', holidays)
         rows.append([item.item_type, item.key, item.epic, item.summary, item.iniDate, item.endDate, cycletime])
 
-    rows.sort(key=lambda x: x[4])
     return rows
 
 
-def write_to_csv(data_json, outputDir, csvFileName, holidays=[]):
+def write_to_csv(data_json, outputDir, fileName, holidays=[]):
     now = datetime.now()
     date_time_str = now.strftime("%Y%m%d_%H%M")
-    csvFileName = csvFileName + "_" + date_time_str + ".csv"
+    csvFileName = f'{outputDir}{fileName}_ct_{date_time_str}.csv'
     
-
-    csv_file_headers = ['Issue Type', 'Key', 'Epic Link', 'Summary', 'In Progress', 'Done', 'Days']
-    rows = getRows(data_json, holidays)
-
-
-    with open(outputDir + csvFileName, 'w') as csvFile:
-        file_writer = csv.writer(csvFile)
-        file_writer.writerow(csv_file_headers)
-        file_writer.writerows(rows)
+    pbis_df = get_dataframe(data_json, holidays)
+    pbis_df.to_csv(csvFileName, index=False)
     print("File is ready: " + csvFileName)
     return csvFileName
+
+
+def get_dataframe(data_json, holidays=[]):
+    rows = getRows(data_json, holidays)
+    headers = ['Issue Type', 'Key', 'Epic Link', 'Summary', 'In Progress', 'Done', 'Days']
+
+    pbis = pd.DataFrame(rows, columns=headers)
+    pbis = pbis.sort_values(['In Progress', 'Done'])
+    # print(pbis.head(5))
+    return pbis
