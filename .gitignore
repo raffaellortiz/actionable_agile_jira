@@ -1,0 +1,6 @@
+/.venv
+/outputfiles/
+/actionable_lib/__pycache__/
+/jira_support/__pycache__/
+
+.env
