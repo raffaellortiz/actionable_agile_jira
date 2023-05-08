@@ -1,6 +1,8 @@
-import csv
 import pandas as pd
 from datetime import datetime, timedelta
+import logging
+
+logger = logging.getLogger('root')
 
 DATE_FMT = '%Y-%m-%d'
 STAUS_IN_PROGRESS = 'In Progress'
@@ -17,7 +19,6 @@ def get_total_per_day(cycletime_df):
     cycletime_df[FINISHED_COUNT] = 0
 
     cycletime_df.loc[cycletime_df[STATUS_DONE].str.strip() != '', FINISHED_COUNT] = 1
-    # df = cycletime_df.loc[cycletime_df[STATUS_DONE].str.strip() == '']
 
     started_series = cycletime_df.groupby([STAUS_IN_PROGRESS]).count()[STARTED_COUNT]
     finished_series = cycletime_df.groupby([STATUS_DONE]).count()[FINISHED_COUNT]
@@ -37,13 +38,10 @@ def get_total_per_day(cycletime_df):
     merged_df.fillna(0, inplace=True)
     merged_df.sort_values([COL_DATE], inplace=True)
     merged_df.reset_index(drop=True, inplace=True)
-    # merged_df.to_csv('merged.csv', index=False)
     return merged_df
 
 
 def get_days_gap(prev_day, current_day):
-    # prev_day = datetime.strptime(prev_day_str, DATE_FMT).date()
-    # current_day = datetime.strptime(current_day_str, DATE_FMT).date()
     if current_day >= prev_day + timedelta(days=2):
         return (prev_day, current_day)
     return ()
@@ -74,7 +72,6 @@ def fill_days_gap(work_througput, holidays=[]):
                 ini_day_gap = getNextBusinessDay(ini_day_gap, holiday_dates)
                 if ini_day_gap == last_day_gap:
                     break
-                # days_gap_added.append((ini_day_gap.strftime(DATE_FMT), 0, 0))
                 days_gap_added.append((ini_day_gap, 0, 0))
         prev_day_str = day
     
@@ -92,10 +89,16 @@ def generate_cumulatives(work_started_finished):
     return work_started_finished
 
 
+def get_throughtput_list(work_started_finished):
+    throughtput_list = work_started_finished[FINISHED_COUNT].tolist()
+    logger.info("throughtput_list: ")
+    logger.info(throughtput_list)
+    return throughtput_list
+
+
 def process_cycletime_df(cycletime_df, holidays=[]):
     total_work_per_day = get_total_per_day(cycletime_df)
     work_started_finished = fill_days_gap(total_work_per_day, holidays)
-    throughtput = work_started_finished[FINISHED_COUNT].tolist() # It's not been used
     cumulative_data = generate_cumulatives(work_started_finished)
     return cumulative_data
 
