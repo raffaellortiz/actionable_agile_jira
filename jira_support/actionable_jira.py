@@ -28,7 +28,7 @@ headers = {
 }
 
 
-def request_jql_data(query):
+def build_payload(query, startAt=0):
     fields = ["*all"]
     expand = ["changelog"]
 
@@ -38,9 +38,12 @@ def request_jql_data(query):
         "maxResults": maxResults,
         "fieldsByKeys": "false",
         "fields": fields,
-        "startAt": 0
+        "startAt": startAt
     })
-    # print("Calling Jira...")
+    return payload
+
+
+def request_jql(payload):
     logger.info("Calling Jira...")
     response = requests.request(
         "POST",
@@ -48,16 +51,32 @@ def request_jql_data(query):
         data=payload,
         headers=headers,
         auth=auth
-    )
-    return response.text
+    ).json()
+    return response
+
+
+def search_issues_by_jql(query):
+    totalGot = 0
+    maxReturned = -1
+    issues = []
+    totalQueryRows = 1
+
+    while totalGot < totalQueryRows:
+        payload = build_payload(query, totalGot)
+        response = request_jql(payload)
+        totalQueryRows = response["total"]
+        maxReturned = response["maxResults"]
+        totalGot += maxReturned
+        issues += response["issues"]
+
+    return issues
 
 
 def get_jira_data():
     JQL = f'project = {PROJECT} AND type in ({ISSUE_TYPE_FILTER}) AND status changed TO "In Progress" AFTER "{STARTED_SINCE}"'
 
-    # print(JQL)
     logger.info(JQL)
-    jql_result = request_jql_data(JQL)
+    jql_result = search_issues_by_jql(JQL)
 
     # logger.debug(jql_result)
 

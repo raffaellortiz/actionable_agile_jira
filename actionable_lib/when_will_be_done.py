@@ -15,7 +15,7 @@ def run_montecarlo(num_items, throughput, total_simulations=SIMULATIONS):
     for i in range(total_simulations):
         day_number = 0
         items_left = num_items
-        final_day = 0;
+        # final_day = 0;
 
         while items_left > 0:
             today_troughput = secrets.choice(throughput)
@@ -58,7 +58,6 @@ def get_trial_percentiles(ocurrences, simulations):
 def print_forecast(percentiles, sprint_days=DEFAULT_SPRINT_DAYS, if_start_on="", holidays=[]):
     print("=" * 50)
     for percentile, days in percentiles.items():
-        # sprints = math.ceil(value / DAYS_PER_SPRINT)
         sprints = days / sprint_days
         print(percentile, "% PROBABILITY IN ", days, " days => ", sprints, " SPRINTS.")
         if if_start_on:
@@ -67,3 +66,9 @@ def print_forecast(percentiles, sprint_days=DEFAULT_SPRINT_DAYS, if_start_on="",
             date_offset = np.busday_offset(if_start_on, days , holidays=holidays)
             print("\t In days individually  => Starting on: ", if_start_on, " Finishing on: ", date_offset)
         print("-" * 50)
+
+def process_montecarlo(items_to_forecast, sprint_days, starting_on, holidays, throughput_list, total_simulations):
+    ocurrences = run_montecarlo(items_to_forecast, throughput_list, total_simulations)
+    percentiles = get_trial_percentiles(ocurrences, total_simulations)
+    print("When will we have ", items_to_forecast, " PBIs?")
+    print_forecast(percentiles, sprint_days, starting_on, holidays)

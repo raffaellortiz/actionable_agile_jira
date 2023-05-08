@@ -7,6 +7,9 @@ logger = logging.getLogger('root')
 DATE_FMT = '%Y-%m-%d'
 STAUS_IN_PROGRESS = 'In Progress'
 STATUS_DONE = 'Done'
+STARTED_COL = 'Started'
+FINISHED_COL = 'Finished'
+
 STARTED_COUNT = 'Started Count'
 FINISHED_COUNT = 'Finished Count'
 COL_DATE = 'Date'
@@ -18,20 +21,20 @@ def get_total_per_day(cycletime_df):
     cycletime_df[STARTED_COUNT] = 1
     cycletime_df[FINISHED_COUNT] = 0
 
-    cycletime_df.loc[cycletime_df[STATUS_DONE].str.strip() != '', FINISHED_COUNT] = 1
+    cycletime_df.loc[cycletime_df[FINISHED_COL].str.strip() != '', FINISHED_COUNT] = 1
 
-    started_series = cycletime_df.groupby([STAUS_IN_PROGRESS]).count()[STARTED_COUNT]
-    finished_series = cycletime_df.groupby([STATUS_DONE]).count()[FINISHED_COUNT]
+    started_series = cycletime_df.groupby([STARTED_COL]).count()[STARTED_COUNT]
+    finished_series = cycletime_df.groupby([FINISHED_COL]).count()[FINISHED_COUNT]
 
     started_count = started_series.to_frame()
     started_count.reset_index(inplace=True)
     finished_count = finished_series.to_frame()
     finished_count.reset_index(inplace=True)
 
-    started_count.rename(columns={STAUS_IN_PROGRESS:COL_DATE}, inplace=True)
-    finished_count.rename(columns={STATUS_DONE:COL_DATE}, inplace=True)
+    started_count.rename(columns={STARTED_COL:COL_DATE}, inplace=True)
+    finished_count.rename(columns={FINISHED_COL:COL_DATE}, inplace=True)
 
-    cycletime_df.loc[cycletime_df[STATUS_DONE].str.strip() != '', FINISHED_COUNT] = 1
+    cycletime_df.loc[cycletime_df[FINISHED_COL].str.strip() != '', FINISHED_COUNT] = 1
     finished_count = finished_count.loc[finished_count[COL_DATE].str.strip() != '']
 
     merged_df = pd.merge(started_count, finished_count, how="outer", on=[COL_DATE])

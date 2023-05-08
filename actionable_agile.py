@@ -28,6 +28,5 @@ sprint_days = 10
 starting_on = datetime.now().strftime("%Y-%m-%d")
 
 throughput_list = throughput.get_throughtput_list(cfd_dataframe)
-ocurrences = wwd.run_montecarlo(items_to_forecast,throughput_list, total_simulations)
-percentiles = wwd.get_trial_percentiles(ocurrences, total_simulations)
-wwd.print_forecast(percentiles, sprint_days, starting_on, holidays=HOLIDAYS)
+
+wwd.process_montecarlo(items_to_forecast, sprint_days, starting_on, HOLIDAYS, throughput_list, total_simulations)
