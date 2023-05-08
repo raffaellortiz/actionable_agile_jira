@@ -59,12 +59,12 @@ def print_forecast(percentiles, sprint_days=DEFAULT_SPRINT_DAYS, if_start_on="",
     print("=" * 50)
     for percentile, days in percentiles.items():
         sprints = days / sprint_days
-        print(percentile, "% PROBABILITY IN ", days, " days => ", sprints, " SPRINTS.")
+        print(f'{percentile}% PROBABILITY IN {days} days => {sprints} SPRINTS.')
         if if_start_on:
             end_of_last_sprint = np.busday_offset(if_start_on, math.ceil(sprints) * sprint_days)
-            print("\t Finishing last Sprint on: ", end_of_last_sprint)
+            print(f'\t Finishing last Sprint on: {end_of_last_sprint}')
             date_offset = np.busday_offset(if_start_on, days , holidays=holidays)
-            print("\t In days individually  => Starting on: ", if_start_on, " Finishing on: ", date_offset)
+            print(f'\t In days individually  => Starting on: {if_start_on} Finishing on: {date_offset}')
         print("-" * 50)
 
 def process_montecarlo(items_to_forecast, sprint_days, starting_on, holidays, throughput_list, total_simulations):

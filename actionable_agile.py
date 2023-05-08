@@ -3,6 +3,7 @@ from dotenv import load_dotenv, find_dotenv
 from jira_support import actionable_jira
 from actionable_lib import cycletime, throughput
 from actionable_lib import when_will_be_done as wwd
+from actionable_lib import howmany_willbe_done as hwd
 from datetime import datetime
 import logging.config
 
@@ -23,10 +24,13 @@ cycletime_df = cycletime.get_dataframe(data_json, HOLIDAYS)
 cfd_dataframe = throughput.process_cycletime_df(cycletime_df, HOLIDAYS)
 # throughput.write_cumulative_to_csv(cfd_dataframe, cycletime_filename)
 
-items_to_forecast = 6
+items_to_forecast = 29
 sprint_days = 10
+sprints_to_forecast= 3
 starting_on = datetime.now().strftime("%Y-%m-%d")
 
 throughput_list = throughput.get_throughtput_list(cfd_dataframe)
 
 wwd.process_montecarlo(items_to_forecast, sprint_days, starting_on, HOLIDAYS, throughput_list, total_simulations)
+
+hwd.process_montecarlo(throughput_list, sprints_to_forecast, sprint_days, total_simulations, starting_on, HOLIDAYS)
