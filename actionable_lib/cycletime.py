@@ -129,12 +129,11 @@ def getRows(data_json, holidays=[]):
     return rows
 
 
-def write_to_csv(data_json, outputDir, fileName, holidays=[]):
+def write_to_csv(pbis_df, outputDir, fileName):
     now = datetime.now()
     date_time_str = now.strftime("%Y%m%d_%H%M")
     csvFileName = f'{outputDir}{fileName}_ct_{date_time_str}.csv'
     
-    pbis_df = get_dataframe(data_json, holidays)
     pbis_df.to_csv(csvFileName, index=False)
     print("File is ready: " + csvFileName)
     return csvFileName
@@ -145,6 +144,6 @@ def get_dataframe(data_json, holidays=[]):
     headers = ['Issue Type', 'Key', 'Epic Link', 'Summary', 'In Progress', 'Done', 'Days']
 
     pbis = pd.DataFrame(rows, columns=headers)
-    pbis = pbis.sort_values(['In Progress', 'Done'])
+    pbis.sort_values(['In Progress', 'Done'], inplace=True)
     # print(pbis.head(5))
     return pbis
