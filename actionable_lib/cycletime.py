@@ -161,7 +161,7 @@ def write_to_csv(pbis_df, outputDir, fileName):
     csvFileName = f'{outputDir}{fileName}_ct_{date_time_str}.csv'
     
     pbis_df.to_csv(csvFileName, index=False)
-    print("File is ready: " + csvFileName)
+    print(f'File is ready: {csvFileName}')
     return csvFileName
 
 

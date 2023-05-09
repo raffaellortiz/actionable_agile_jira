@@ -12,7 +12,6 @@ _ = load_dotenv(find_dotenv())
 jira_user = os.getenv('JIRA_USER')
 jira_password = os.getenv('JIRA_PASSWORD')
 
-PROJECT = os.getenv('PROJECT_NAME')
 STARTED_SINCE = os.getenv('STARTED_SINCE')
 ISSUE_TYPE_FILTER = os.getenv("ISSUE_TYPE_FILTER")
 JIRA_API_URL = os.getenv('JIRA_API_URL')
@@ -72,8 +71,8 @@ def search_issues_by_jql(query):
     return issues
 
 
-def get_jira_data():
-    JQL = f'project = {PROJECT} AND type in ({ISSUE_TYPE_FILTER}) AND status changed TO "In Progress" AFTER "{STARTED_SINCE}"'
+def get_jira_data(project):
+    JQL = f'project = {project} AND type in ({ISSUE_TYPE_FILTER}) AND status changed TO "In Progress" AFTER "{STARTED_SINCE}"'
 
     logger.info(JQL)
     jql_result = search_issues_by_jql(JQL)
