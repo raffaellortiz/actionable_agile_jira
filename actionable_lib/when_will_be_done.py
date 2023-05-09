@@ -12,7 +12,7 @@ def run_montecarlo(num_items, throughput, total_simulations=SIMULATIONS):
     # TO-DO: Add exception when num_items is < 1
     ocurrences = {}
     logger.info(f'Running montecarlo with {total_simulations} simulations')
-    for i in range(total_simulations):
+    for _ in range(total_simulations):
         day_number = 0
         items_left = num_items
         # final_day = 0;

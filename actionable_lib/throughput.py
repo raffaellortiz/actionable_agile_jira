@@ -111,4 +111,4 @@ def write_cumulative_to_csv(cumulative_data, filename):
     output_file = file_name_split[0] + "_out." + file_name_split[1]
     output_file = f'{file_name_split[0]}_cfd.csv'
     cumulative_data.to_csv(output_file, index=False)
-    print("File is ready: " + filename)
+    print(f'File is ready: {output_file}')

@@ -21,9 +21,9 @@ def run_montecarlo(sprints, days_per_sprint=DEFAULT_DAYS_PER_SPRINT, throughput=
     total_items_completed = {}
 
     logger.info(f'Running montecarlo with {total_simulations} simulations')
-    for i in range(total_simulations):
+    for _ in range(total_simulations):
         items_completed = 0
-        for day_number in range(DAYS_TO_FORECAST):
+        for _ in range(DAYS_TO_FORECAST):
             items_completed = items_completed + secrets.choice(throughput)
 
         if items_completed in total_items_completed:
